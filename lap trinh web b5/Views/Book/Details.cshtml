@@ -1,0 +1,38 @@
+@model lap_trinh_web_b5.Models.Book.Book
+
+@{
+    ViewData["Title"] = "Chi tiet sach";
+    var imagePath = string.IsNullOrWhiteSpace(Model.Image)
+        ? Url.Content("~/Content/ImageBooks/no-image.jpg")
+        : Url.Content("~/Content/ImageBooks/" + Model.Image);
+}
+
+<div class="book-detail">
+    <div class="book-detail-cover">
+        <img src="@imagePath" alt="@Model.Title" />
+    </div>
+
+    <div class="book-detail-info">
+        <h1>@Model.Title</h1>
+        <dl>
+            <dt>Tac gia</dt>
+            <dd>@Model.Author</dd>
+
+            <dt>Nha cung cap</dt>
+            <dd>NXB Tre</dd>
+
+            <dt>The loai</dt>
+            <dd>@Model.Category?.CategoryName</dd>
+        </dl>
+
+        <div class="book-detail-price">@Model.Price.ToString("N0") VND</div>
+
+        <p>@Model.Description</p>
+
+        <div class="detail-actions">
+            <a asp-action="Index" class="btn btn-outline-secondary">Quay lai</a>
+            <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">Sua</a>
+            <button class="btn btn-danger" type="button">Dat mua</button>
+        </div>
+    </div>
+</div>

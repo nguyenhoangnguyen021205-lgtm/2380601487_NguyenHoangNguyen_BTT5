@@ -1,0 +1,26 @@
+@model lap_trinh_web_b5.Models.Book.Book
+
+@{
+    ViewData["Title"] = "Xoa sach";
+    var imagePath = string.IsNullOrWhiteSpace(Model.Image)
+        ? Url.Content("~/Content/ImageBooks/no-image.jpg")
+        : Url.Content("~/Content/ImageBooks/" + Model.Image);
+}
+
+<h1>Xoa sach</h1>
+
+<div class="delete-book">
+    <img src="@imagePath" alt="@Model.Title" class="form-cover-preview" />
+    <div>
+        <h2>@Model.Title</h2>
+        <p><strong>Tac gia:</strong> @Model.Author</p>
+        <p><strong>Chu de:</strong> @Model.Category?.CategoryName</p>
+        <p class="text-danger">Ban co chac muon xoa sach nay?</p>
+
+        <form asp-action="Delete">
+            <input type="hidden" asp-for="Id" />
+            <button type="submit" class="btn btn-danger">Xoa</button>
+            <a asp-action="Index" class="btn btn-outline-secondary">Quay lai</a>
+        </form>
+    </div>
+</div>

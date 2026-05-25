@@ -1,0 +1,25 @@
+@model List<lap_trinh_web_b5.Models.Grade>
+
+@{
+    ViewData["Title"] = "Danh sach lop";
+}
+
+<h1>Danh sach lop</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Ma lop</th>
+            <th>Ten lop</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var grade in Model)
+        {
+            <tr>
+                <td>@grade.GradeId</td>
+                <td>@grade.GradeName</td>
+            </tr>
+        }
+    </tbody>
+</table>

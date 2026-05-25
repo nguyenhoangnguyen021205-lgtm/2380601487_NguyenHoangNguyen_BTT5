@@ -1,0 +1,57 @@
+@model lap_trinh_web_b5.Models.Book.BookIndexViewModel
+
+@{
+    ViewData["Title"] = "Danh sach sach";
+}
+
+<div class="book-page">
+    <aside class="book-sidebar">
+        <h2>Chu de</h2>
+        <ul class="category-list">
+            <li>
+                <a asp-action="Index" class="@(Model.CurrentCategoryId == null ? "active" : "")">Tat ca (@Model.Books.Count)</a>
+            </li>
+            @foreach (var category in Model.Categories)
+            {
+                <li>
+                    <a asp-action="Index"
+                       asp-route-categoryId="@category.CategoryId"
+                       class="@(Model.CurrentCategoryId == category.CategoryId ? "active" : "")">
+                        @category.CategoryName (@category.BookCount)
+                    </a>
+                </li>
+            }
+        </ul>
+    </aside>
+
+    <section class="book-content">
+        <div class="book-toolbar">
+            <h1>Them moi</h1>
+            <a asp-action="Create" class="btn btn-primary">Them sach</a>
+        </div>
+
+        <div class="book-grid">
+            @foreach (var book in Model.Books)
+            {
+                var imagePath = string.IsNullOrWhiteSpace(book.Image)
+                    ? Url.Content("~/Content/ImageBooks/no-image.jpg")
+                    : Url.Content("~/Content/ImageBooks/" + book.Image);
+
+                <article class="book-card">
+                    <img src="@imagePath" alt="@book.Title" class="book-cover" />
+                    <div class="book-card-body">
+                        <h2>@book.Title</h2>
+                        <p><strong>Tac gia:</strong> @book.Author</p>
+                        <p><strong>The loai:</strong> @book.Category?.CategoryName</p>
+                        <p class="book-price">@book.Price.ToString("N0") VND</p>
+                    </div>
+                    <div class="book-actions">
+                        <a asp-action="Details" asp-route-id="@book.Id" class="btn btn-outline-secondary btn-sm">Chi tiet</a>
+                        <a asp-action="Edit" asp-route-id="@book.Id" class="btn btn-outline-primary btn-sm">Edit</a>
+                        <a asp-action="Delete" asp-route-id="@book.Id" class="btn btn-success btn-sm">Xoa</a>
+                    </div>
+                </article>
+            }
+        </div>
+    </section>
+</div>
