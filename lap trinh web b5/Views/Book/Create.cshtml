@@ -1,53 +1,170 @@
 @model lap_trinh_web_b5.Models.Book.Book
 
 @{
-    ViewData["Title"] = "Them sach";
+    ViewData["Title"] = "Thêm sách mới";
 }
 
-<h1>Them sach</h1>
+<style>
+    .form-container-premium {
+        background: #ffffff;
+        border-radius: 16px;
+        padding: 32px;
+        box-shadow: 0 4px 30px rgba(0, 0, 0, 0.05);
+        border: 1px solid #e2e8f0;
+        margin-top: 24px;
+        max-width: 800px;
+        margin-left: auto;
+        margin-right: auto;
+        animation: fadeInUp 0.4s ease-out;
+    }
 
-<form asp-action="Create" enctype="multipart/form-data" class="book-form">
-    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    .form-title-premium {
+        font-size: 1.6rem;
+        font-weight: 800;
+        color: #1e293b;
+        margin-bottom: 24px;
+        border-bottom: 2px solid #f1f5f9;
+        padding-bottom: 12px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
 
-    <div class="mb-3">
-        <label asp-for="Title" class="form-label">Ten sach</label>
-        <input asp-for="Title" class="form-control" />
-        <span asp-validation-for="Title" class="text-danger"></span>
-    </div>
+    .form-label-premium {
+        font-weight: 700;
+        color: #475569;
+        font-size: 0.9rem;
+        margin-bottom: 8px;
+    }
 
-    <div class="mb-3">
-        <label asp-for="Author" class="form-label">Tac gia</label>
-        <input asp-for="Author" class="form-control" />
-        <span asp-validation-for="Author" class="text-danger"></span>
-    </div>
+    .form-control-premium {
+        border-radius: 10px;
+        border: 1.5px solid #cbd5e1;
+        padding: 10px 14px;
+        font-size: 0.95rem;
+        transition: all 0.2s ease;
+        background: #f8fafc;
+    }
 
-    <div class="mb-3">
-        <label asp-for="Price" class="form-label">Gia</label>
-        <input asp-for="Price" class="form-control" />
-        <span asp-validation-for="Price" class="text-danger"></span>
-    </div>
+    .form-control-premium:focus {
+        border-color: #4f46e5;
+        background: #ffffff;
+        box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1);
+        outline: none;
+    }
 
-    <div class="mb-3">
-        <label asp-for="CategoryId" class="form-label">Chu de</label>
-        <select asp-for="CategoryId" class="form-select" asp-items="ViewBag.CategoryId"></select>
-        <span asp-validation-for="CategoryId" class="text-danger"></span>
-    </div>
+    .btn-save-premium {
+        background: linear-gradient(135deg, #10b981, #059669);
+        color: #ffffff;
+        border: none;
+        padding: 12px 24px;
+        font-weight: 700;
+        border-radius: 10px;
+        box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25);
+        transition: all 0.2s ease;
+        width: 140px;
+    }
 
-    <div class="mb-3">
-        <label asp-for="Description" class="form-label">Mo ta</label>
-        <textarea asp-for="Description" class="form-control" rows="5"></textarea>
-        <span asp-validation-for="Description" class="text-danger"></span>
-    </div>
+    .btn-save-premium:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 6px 16px rgba(16, 185, 129, 0.35);
+        color: #ffffff;
+    }
 
-    <div class="mb-3">
-        <label class="form-label">Hinh anh</label>
-        <input type="file" name="imageFile" class="form-control" accept="image/*" />
-        <span asp-validation-for="Image" class="text-danger"></span>
-    </div>
+    .btn-cancel-premium {
+        background: #ffffff;
+        color: #64748b;
+        border: 1.5px solid #cbd5e1;
+        padding: 12px 24px;
+        font-weight: 700;
+        border-radius: 10px;
+        transition: all 0.2s ease;
+        text-decoration: none;
+        display: inline-block;
+        text-align: center;
+        width: 140px;
+    }
 
-    <button type="submit" class="btn btn-primary">Luu</button>
-    <a asp-action="Index" class="btn btn-outline-secondary">Quay lai</a>
-</form>
+    .btn-cancel-premium:hover {
+        background: #f1f5f9;
+        color: #334155;
+    }
+
+    @@keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+</style>
+
+<div class="form-container-premium">
+    <h1 class="form-title-premium">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-journal-plus text-primary" viewBox="0 0 16 16">
+            <path fill-rule="evenodd" d="M8 5.5a.5.5 0 0 1 .5.5v1.5H10a.5.5 0 0 1 0 1H8.5V10a.5.5 0 0 1-1 0V8.5H6a.5.5 0 0 1 0-1h1.5V6a.5.5 0 0 1 .5-.5z"/>
+            <path d="M3 0h10a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2zm0 1a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H3z"/>
+        </svg>
+        Thêm Sách Mới vào Hệ thống
+    </h1>
+
+    <form asp-action="Create" enctype="multipart/form-data">
+        <div asp-validation-summary="ModelOnly" class="alert alert-danger rounded-3" role="alert"></div>
+
+        <div class="row">
+            <!-- Left inputs col -->
+            <div class="col-md-6 mb-4">
+                <label asp-for="Title" class="form-label-premium">Tên sách</label>
+                <input asp-for="Title" class="form-control form-control-premium" placeholder="Nhập tên cuốn sách..." />
+                <span asp-validation-for="Title" class="text-danger small mt-1 d-block"></span>
+            </div>
+
+            <!-- Right inputs col -->
+            <div class="col-md-6 mb-4">
+                <label asp-for="Author" class="form-label-premium">Tác giả</label>
+                <input asp-for="Author" class="form-control form-control-premium" placeholder="Tên tác giả..." />
+                <span asp-validation-for="Author" class="text-danger small mt-1 d-block"></span>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6 mb-4">
+                <label asp-for="Price" class="form-label-premium">Đơn giá (VND)</label>
+                <input asp-for="Price" class="form-control form-control-premium" type="number" placeholder="Ví dụ: 61000" />
+                <span asp-validation-for="Price" class="text-danger small mt-1 d-block"></span>
+            </div>
+
+            <div class="col-md-6 mb-4">
+                <label asp-for="CategoryId" class="form-label-premium">Chủ đề thể loại</label>
+                <select asp-for="CategoryId" class="form-select form-control-premium" asp-items="ViewBag.CategoryId"></select>
+                <span asp-validation-for="CategoryId" class="text-danger small mt-1 d-block"></span>
+            </div>
+        </div>
+
+        <div class="mb-4">
+            <label asp-for="Description" class="form-label-premium">Mô tả tóm tắt sách</label>
+            <textarea asp-for="Description" class="form-control form-control-premium" rows="4" placeholder="Viết mô tả ngắn gọn về nội dung sách..."></textarea>
+            <span asp-validation-for="Description" class="text-danger small mt-1 d-block"></span>
+        </div>
+
+        <div class="mb-4">
+            <label class="form-label-premium">Hình ảnh bìa sách</label>
+            <div class="input-group">
+                <input type="file" name="imageFile" class="form-control form-control-premium" accept="image/*" />
+            </div>
+            <span asp-validation-for="Image" class="text-danger small mt-1 d-block"></span>
+            <div class="form-text text-muted small mt-1">Chấp nhận định dạng ảnh phổ biến (jpg, png, webp, gif).</div>
+        </div>
+
+        <div class="d-flex justify-content-end gap-3 mt-4 pt-3 border-top border-light">
+            <a asp-action="Index" class="btn-cancel-premium">Quay lại</a>
+            <button type="submit" class="btn-save-premium">Lưu sách</button>
+        </div>
+    </form>
+</div>
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}

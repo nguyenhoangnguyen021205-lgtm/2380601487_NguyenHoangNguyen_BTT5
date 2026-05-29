@@ -1,10 +1,11 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - lap_trinh_web_b5</title>
+    <title>@ViewData["Title"] - Nguyễn Hoàng Nguyên (2380601487)</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/lap_trinh_web_b5.styles.css" asp-append-version="true" />
 </head>
@@ -12,7 +13,7 @@
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
             <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">lap_trinh_web_b5</a>
+                <a class="navbar-brand fw-bold text-primary" asp-area="" asp-controller="Home" asp-action="Index">Nguyễn Hoàng Nguyên</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
@@ -26,10 +27,10 @@
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Book" asp-action="Index">Sach</a>
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Book" asp-action="Index">Sách</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Grade" asp-action="Index">Lop</a>
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Grade" asp-action="Index">Lớp</a>
                         </li>
                     </ul>
                 </div>
@@ -42,9 +43,13 @@
         </main>
     </div>
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2026 - lap_trinh_web_b5 - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+    <footer class="border-top footer text-muted bg-light py-3">
+        <div class="container d-flex justify-content-between align-items-center">
+            <span>&copy; 2026 - <strong>Nguyễn Hoàng Nguyên</strong> (MSSV: 2380601487 - Lớp: 23DTHB4)</span>
+            <div>
+                <span class="badge bg-primary">Bài tập 5 - Lập trình Web</span>
+                <a asp-area="" asp-controller="Home" asp-action="Privacy" class="ms-3 text-decoration-none text-secondary">Privacy</a>
+            </div>
         </div>
     </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>

@@ -1,38 +1,532 @@
 @model lap_trinh_web_b5.Models.Book.Book
 
 @{
-    ViewData["Title"] = "Chi tiet sach";
+    ViewData["Title"] = Model.Title;
     var imagePath = string.IsNullOrWhiteSpace(Model.Image)
         ? Url.Content("~/Content/ImageBooks/no-image.jpg")
         : Url.Content("~/Content/ImageBooks/" + Model.Image);
+        
+    // Calculate a realistic original price for the Fahasa discount representation
+    var originalPrice = Model.Price * 1.30m;
 }
 
-<div class="book-detail">
-    <div class="book-detail-cover">
-        <img src="@imagePath" alt="@Model.Title" />
-    </div>
+<style>
+    /* Styling variables */
+    :root {
+        --fahasa-red: #c92127;
+        --fahasa-orange: #f7941e;
+        --text-dark: #333333;
+        --text-muted: #777777;
+        --bg-light: #fafafa;
+        --border-color: #ededed;
+    }
 
-    <div class="book-detail-info">
-        <h1>@Model.Title</h1>
-        <dl>
-            <dt>Tac gia</dt>
-            <dd>@Model.Author</dd>
+    /* Layout structure */
+    .fahasa-detail-container {
+        background: #ffffff;
+        border-radius: 16px;
+        padding: 32px;
+        box-shadow: 0 4px 30px rgba(0, 0, 0, 0.05);
+        border: 1px solid var(--border-color);
+        margin-top: 24px;
+        animation: slideUp 0.4s ease-out;
+    }
 
-            <dt>Nha cung cap</dt>
-            <dd>NXB Tre</dd>
+    .fahasa-grid {
+        display: grid;
+        grid-template-columns: 400px 1fr;
+        gap: 40px;
+    }
 
-            <dt>The loai</dt>
-            <dd>@Model.Category?.CategoryName</dd>
-        </dl>
+    /* Left Column: Image */
+    .fahasa-image-column {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
 
-        <div class="book-detail-price">@Model.Price.ToString("N0") VND</div>
+    .fahasa-main-image-wrapper {
+        border: 1px solid var(--border-color);
+        border-radius: 12px;
+        padding: 16px;
+        background: #ffffff;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+        width: 100%;
+        max-width: 360px;
+        aspect-ratio: 3 / 4;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        transition: transform 0.3s ease;
+    }
 
-        <p>@Model.Description</p>
+    .fahasa-main-image-wrapper:hover {
+        transform: scale(1.02);
+    }
 
-        <div class="detail-actions">
-            <a asp-action="Index" class="btn btn-outline-secondary">Quay lai</a>
-            <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">Sua</a>
-            <button class="btn btn-danger" type="button">Dat mua</button>
+    .fahasa-main-image-wrapper img {
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: contain;
+    }
+
+    /* Right Column: Info */
+    .fahasa-info-column {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .fahasa-book-title {
+        font-size: 1.8rem;
+        font-weight: 800;
+        color: var(--text-dark);
+        line-height: 1.3;
+        margin-bottom: 16px;
+    }
+
+    /* Meta Info Grid */
+    .fahasa-meta-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 12px;
+        font-size: 0.9rem;
+        margin-bottom: 16px;
+        border-bottom: 1px solid var(--border-color);
+        padding-bottom: 16px;
+    }
+
+    .fahasa-meta-item {
+        color: var(--text-dark);
+    }
+
+    .fahasa-meta-item span {
+        color: var(--text-muted);
+    }
+
+    .fahasa-meta-item a {
+        color: #2489ff;
+        text-decoration: none;
+        font-weight: 600;
+    }
+
+    .fahasa-meta-item a:hover {
+        text-decoration: underline;
+    }
+
+    /* Rating stars */
+    .fahasa-rating {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        margin-bottom: 20px;
+    }
+
+    .stars-list {
+        color: #ffc107; /* Gold stars */
+        font-size: 1.05rem;
+    }
+
+    .rating-count {
+        color: var(--text-muted);
+        font-size: 0.9rem;
+    }
+
+    /* Price Section (strictly matching Fahasa style) */
+    .fahasa-price-section {
+        background: #fdf6f6;
+        border-radius: 12px;
+        padding: 20px 24px;
+        margin-bottom: 24px;
+        border: 1px solid #fce8e8;
+    }
+
+    .price-row {
+        display: flex;
+        align-items: baseline;
+        gap: 16px;
+        flex-wrap: wrap;
+    }
+
+    .current-price {
+        color: var(--fahasa-red);
+        font-size: 2.2rem;
+        font-weight: 800;
+        margin: 0;
+    }
+
+    .original-price {
+        color: var(--text-muted);
+        font-size: 1.15rem;
+        text-decoration: line-through;
+        margin: 0;
+    }
+
+    .discount-badge {
+        background: var(--fahasa-red);
+        color: #ffffff;
+        font-size: 0.85rem;
+        font-weight: 700;
+        padding: 4px 10px;
+        border-radius: 6px;
+        text-transform: uppercase;
+    }
+
+    /* Description */
+    .fahasa-description-box {
+        margin-bottom: 28px;
+        font-size: 0.95rem;
+        line-height: 1.6;
+        color: #475569;
+    }
+
+    .description-title {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: var(--text-dark);
+        margin-bottom: 10px;
+    }
+
+    /* Delivery Info Section */
+    .fahasa-delivery-box {
+        background: #ffffff;
+        border: 1px solid var(--border-color);
+        border-radius: 12px;
+        padding: 16px 20px;
+        margin-bottom: 28px;
+        font-size: 0.9rem;
+    }
+
+    .delivery-row {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 10px;
+        color: var(--text-dark);
+    }
+
+    .delivery-row:last-child {
+        margin-bottom: 0;
+    }
+
+    .delivery-label {
+        font-weight: 600;
+        color: var(--text-muted);
+    }
+
+    .delivery-action-link {
+        color: #2489ff;
+        text-decoration: none;
+        font-weight: 600;
+        margin-left: 8px;
+    }
+
+    .delivery-action-link:hover {
+        text-decoration: underline;
+    }
+
+    /* Quantity Selector (functional with javascript) */
+    .fahasa-quantity-selector {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        margin-bottom: 32px;
+    }
+
+    .quantity-label {
+        font-weight: 700;
+        color: var(--text-dark);
+        font-size: 0.95rem;
+    }
+
+    .quantity-control-group {
+        display: flex;
+        align-items: center;
+        border: 1px solid #c2c2c2;
+        border-radius: 6px;
+        overflow: hidden;
+        background: #ffffff;
+        width: 130px;
+        height: 38px;
+    }
+
+    .btn-qty {
+        background: #f8fafc;
+        border: none;
+        color: var(--text-dark);
+        font-size: 1.2rem;
+        font-weight: 600;
+        width: 38px;
+        height: 100%;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: background 0.2s;
+    }
+
+    .btn-qty:hover {
+        background: #e2e8f0;
+    }
+
+    .input-qty {
+        border: none;
+        border-left: 1px solid #cbd5e1;
+        border-right: 1px solid #cbd5e1;
+        text-align: center;
+        width: 54px;
+        height: 100%;
+        font-weight: 700;
+        color: var(--text-dark);
+        outline: none;
+    }
+
+    /* Action Buttons strictly matching Fahasa details */
+    .fahasa-actions {
+        display: flex;
+        gap: 16px;
+        margin-bottom: 24px;
+    }
+
+    .btn-add-to-cart {
+        flex: 1;
+        background: #ffffff;
+        color: var(--fahasa-red);
+        border: 2px solid var(--fahasa-red);
+        padding: 14px 24px;
+        font-size: 1rem;
+        font-weight: 700;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+    }
+
+    .btn-add-to-cart:hover {
+        background: rgba(201, 33, 39, 0.04);
+        transform: translateY(-2px);
+    }
+
+    .btn-buy-now {
+        flex: 1.2;
+        background: var(--fahasa-red);
+        color: #ffffff;
+        border: none;
+        padding: 14px 24px;
+        font-size: 1rem;
+        font-weight: 700;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 12px rgba(201, 33, 39, 0.25);
+        text-align: center;
+    }
+
+    .btn-buy-now:hover {
+        background: #ab171c;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 16px rgba(201, 33, 39, 0.35);
+    }
+
+    /* Back & Edit actions for management */
+    .admin-bar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 40px;
+        padding-top: 20px;
+        border-top: 1px solid var(--border-color);
+    }
+
+    .btn-admin-back {
+        background: #ffffff;
+        color: #475569;
+        border: 1px solid #cbd5e1;
+        padding: 8px 20px;
+        border-radius: 8px;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.2s;
+    }
+
+    .btn-admin-back:hover {
+        background: #f1f5f9;
+        color: #1e293b;
+    }
+
+    .btn-admin-edit {
+        background: linear-gradient(135deg, #4f46e5, #6366f1);
+        color: #ffffff;
+        border: none;
+        padding: 8px 20px;
+        border-radius: 8px;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.2s;
+        box-shadow: 0 4px 10px rgba(79, 70, 229, 0.15);
+    }
+
+    .btn-admin-edit:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 6px 14px rgba(79, 70, 229, 0.25);
+        color: #ffffff;
+    }
+
+    @@keyframes slideUp {
+        from {
+            opacity: 0;
+            transform: translateY(15px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @@media (max-width: 992px) {
+        .fahasa-grid {
+            grid-template-columns: 1fr;
+            gap: 32px;
+        }
+        .fahasa-main-image-wrapper {
+            max-width: 280px;
+        }
+    }
+</style>
+
+<div class="fahasa-detail-container">
+    <div class="fahasa-grid">
+        <!-- Left Column: Large Cover Image -->
+        <div class="fahasa-image-column">
+            <div class="fahasa-main-image-wrapper">
+                <img src="@imagePath" alt="@Model.Title" />
+            </div>
+        </div>
+
+        <!-- Right Column: Fahasa Detail Information -->
+        <div class="fahasa-info-column">
+            <!-- Book Title -->
+            <h1 class="fahasa-book-title">@Model.Title</h1>
+
+            <!-- Meta Data Grid -->
+            <div class="fahasa-meta-grid">
+                <div class="fahasa-meta-item">
+                    <span>Nhà cung cấp:</span> <a href="#">NXB Trẻ</a>
+                </div>
+                <div class="fahasa-meta-item">
+                    <span>Tác giả:</span> <strong class="text-dark">@Model.Author</strong>
+                </div>
+                <div class="fahasa-meta-item">
+                    <span>Nhà xuất bản:</span> <strong class="text-dark">NXB Trẻ</strong>
+                </div>
+                <div class="fahasa-meta-item">
+                    <span>Thể loại:</span> <strong class="text-primary">@Model.Category?.CategoryName</strong>
+                </div>
+            </div>
+
+            <!-- Rating Stars (Gold & Count) -->
+            <div class="fahasa-rating">
+                <div class="stars-list">
+                    <i class="bi bi-star-fill"></i>
+                    <i class="bi bi-star-fill"></i>
+                    <i class="bi bi-star-fill"></i>
+                    <i class="bi bi-star-fill"></i>
+                    <i class="bi bi-star-fill"></i>
+                </div>
+                <div class="rating-count">
+                    (79 đánh giá)
+                </div>
+            </div>
+
+            <!-- Price Box (Fahasa style with discount) -->
+            <div class="fahasa-price-section">
+                <div class="price-row">
+                    <h2 class="current-price">@Model.Price.ToString("N0") đ</h2>
+                    <span class="original-price">@originalPrice.ToString("N0") đ</span>
+                    <span class="discount-badge">-23%</span>
+                </div>
+            </div>
+
+            <!-- Delivery Box -->
+            <div class="fahasa-delivery-box">
+                <div class="delivery-row">
+                    <div>
+                        <span class="delivery-label"><i class="bi bi-truck me-2"></i>Thời gian giao hàng:</span>
+                        <span>Giao nhanh trong 24h</span>
+                    </div>
+                </div>
+                <div class="delivery-row">
+                    <div>
+                        <span class="delivery-label"><i class="bi bi-geo-alt me-2"></i>Giao hàng đến:</span>
+                        <span>Quận 9, TP. Hồ Chí Minh</span>
+                        <a href="#" class="delivery-action-link">Thay đổi</a>
+                    </div>
+                </div>
+                <div class="delivery-row">
+                    <div>
+                        <span class="delivery-label"><i class="bi bi-arrow-left-right me-2"></i>Chính sách đổi trả:</span>
+                        <span>Đổi trả sản phẩm trong 30 ngày</span>
+                        <a href="#" class="delivery-action-link">Xem thêm</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Description -->
+            <div class="fahasa-description-box">
+                <div class="description-title">Mô tả sản phẩm</div>
+                <p>@Model.Description</p>
+            </div>
+
+            <!-- Quantity Selector with working inline JS -->
+            <div class="fahasa-quantity-selector">
+                <span class="quantity-label">Số lượng:</span>
+                <div class="quantity-control-group">
+                    <button type="button" class="btn-qty" onclick="decreaseQty()">-</button>
+                    <input type="text" class="input-qty" id="qtyInput" value="1" readonly />
+                    <button type="button" class="btn-qty" onclick="increaseQty()">+</button>
+                </div>
+            </div>
+
+            <!-- Action buttons strictly matching Slide 29 Fahasa mockup -->
+            <div class="fahasa-actions">
+                <button type="button" class="btn-add-to-cart" onclick="alert('Đã thêm sách vào giỏ hàng thành công!')">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-cart3" viewBox="0 0 16 16">
+                        <path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .49.598l-1 5a.5.5 0 0 1-.465.401l-9.397.472L4.415 11H13a.5.5 0 0 1 0 1H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5zM3.102 4l.84 4.479 9.144-.459L13.89 4H3.102zM5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/>
+                    </svg>
+                    Thêm vào giỏ hàng
+                </button>
+                <button type="button" class="btn-buy-now" onclick="alert('Đang tiến hành đặt mua sản phẩm!')">
+                    Mua ngay
+                </button>
+            </div>
         </div>
     </div>
+
+    <!-- Administrative Action Bar -->
+    <div class="admin-bar">
+        <a asp-action="Index" class="btn-admin-back">
+            <i class="bi bi-arrow-left me-2"></i>Quay lại danh sách
+        </a>
+        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn-admin-edit">
+            <i class="bi bi-pencil-square me-2"></i>Chỉnh sửa sách
+        </a>
+    </div>
 </div>
+
+<!-- Simple quantity script -->
+<script>
+    function decreaseQty() {
+        var input = document.getElementById("qtyInput");
+        var val = parseInt(input.value);
+        if (val > 1) {
+            input.value = val - 1;
+        }
+    }
+    function increaseQty() {
+        var input = document.getElementById("qtyInput");
+        var val = parseInt(input.value);
+        input.value = val + 1;
+    }
+</script>

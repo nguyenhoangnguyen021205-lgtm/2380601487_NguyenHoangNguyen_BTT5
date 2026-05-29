@@ -1,26 +1,176 @@
 @model lap_trinh_web_b5.Models.Book.Book
 
 @{
-    ViewData["Title"] = "Xoa sach";
+    ViewData["Title"] = "Xóa sách";
     var imagePath = string.IsNullOrWhiteSpace(Model.Image)
         ? Url.Content("~/Content/ImageBooks/no-image.jpg")
         : Url.Content("~/Content/ImageBooks/" + Model.Image);
 }
 
-<h1>Xoa sach</h1>
+<style>
+    .delete-container-premium {
+        background: #ffffff;
+        border-radius: 16px;
+        padding: 32px;
+        box-shadow: 0 4px 30px rgba(0, 0, 0, 0.05);
+        border: 1px solid #fecaca;
+        margin-top: 24px;
+        max-width: 700px;
+        margin-left: auto;
+        margin-right: auto;
+        animation: fadeInUp 0.4s ease-out;
+    }
 
-<div class="delete-book">
-    <img src="@imagePath" alt="@Model.Title" class="form-cover-preview" />
-    <div>
-        <h2>@Model.Title</h2>
-        <p><strong>Tac gia:</strong> @Model.Author</p>
-        <p><strong>Chu de:</strong> @Model.Category?.CategoryName</p>
-        <p class="text-danger">Ban co chac muon xoa sach nay?</p>
+    .delete-title-premium {
+        font-size: 1.5rem;
+        font-weight: 800;
+        color: #991b1b;
+        margin-bottom: 24px;
+        border-bottom: 2px solid #fee2e2;
+        padding-bottom: 12px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
 
-        <form asp-action="Delete">
-            <input type="hidden" asp-for="Id" />
-            <button type="submit" class="btn btn-danger">Xoa</button>
-            <a asp-action="Index" class="btn btn-outline-secondary">Quay lai</a>
-        </form>
+    .warning-box {
+        background: #fef2f2;
+        border-left: 4px solid #ef4444;
+        padding: 16px 20px;
+        border-radius: 8px;
+        margin-bottom: 24px;
+        color: #991b1b;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .delete-grid {
+        display: grid;
+        grid-template-columns: 140px 1fr;
+        gap: 24px;
+        margin-bottom: 28px;
+    }
+
+    .delete-image-wrapper {
+        border: 1px solid #e2e8f0;
+        border-radius: 10px;
+        padding: 8px;
+        background: #f8fafc;
+        height: 180px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+    }
+
+    .delete-image-wrapper img {
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: cover;
+        border-radius: 6px;
+    }
+
+    .delete-details h3 {
+        font-size: 1.3rem;
+        font-weight: 800;
+        color: #1e293b;
+        margin-bottom: 12px;
+    }
+
+    .delete-details p {
+        margin-bottom: 8px;
+        color: #475569;
+        font-size: 0.95rem;
+    }
+
+    .delete-details strong {
+        color: #1e293b;
+    }
+
+    .btn-delete-premium {
+        background: linear-gradient(135deg, #ef4444, #dc2626);
+        color: #ffffff;
+        border: none;
+        padding: 12px 24px;
+        font-weight: 700;
+        border-radius: 10px;
+        box-shadow: 0 4px 12px rgba(239, 68, 68, 0.25);
+        transition: all 0.2s ease;
+        width: 140px;
+    }
+
+    .btn-delete-premium:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 6px 16px rgba(239, 68, 68, 0.35);
+        color: #ffffff;
+    }
+
+    .btn-cancel-premium {
+        background: #ffffff;
+        color: #64748b;
+        border: 1.5px solid #cbd5e1;
+        padding: 12px 24px;
+        font-weight: 700;
+        border-radius: 10px;
+        transition: all 0.2s ease;
+        text-decoration: none;
+        display: inline-block;
+        text-align: center;
+        width: 140px;
+    }
+
+    .btn-cancel-premium:hover {
+        background: #f1f5f9;
+        color: #334155;
+    }
+
+    @@keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+</style>
+
+<div class="delete-container-premium">
+    <h1 class="delete-title-premium">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-trash3-fill text-danger" viewBox="0 0 16 16">
+            <path d="M11 1.5v1h3.5a.5.5 0 0 1 0 1h-.538l-.853 10.66A2 2 0 0 1 11.115 16H4.885a2 2 0 0 1-1.993-1.84L2.038 3.5H1.5a.5.5 0 0 1 0-1H5v-1A1.5 1.5 0 0 1 6.5 0h3A1.5 1.5 0 0 1 11 1.5Zm-5 0v1h4v-1a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5ZM4.5 5.029l.5 8.5a.5.5 0 1 0 .998-.06l-.5-8.5a.5.5 0 1 0-.998.06Zm6.53-.528a.5.5 0 0 0-.528.47l-.5 8.5a.5.5 0 0 0 .998.058l.5-8.5a.5.5 0 0 0-.47-.528ZM8 4.5a.5.5 0 0 0-.5.5v8.5a.5.5 0 0 0 1 0V5a.5.5 0 0 0-.5-.5Z"/>
+        </svg>
+        Xác nhận Xóa Sách
+    </h1>
+
+    <div class="warning-box shadow-sm">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-exclamation-triangle-fill" viewBox="0 0 16 16">
+            <path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/>
+        </svg>
+        Cảnh báo: Hành động này không thể hoàn tác. Bạn có chắc chắn muốn xóa cuốn sách này?
     </div>
+
+    <div class="delete-grid">
+        <div class="delete-image-wrapper shadow-sm">
+            <img src="@imagePath" alt="@Model.Title" />
+        </div>
+        <div class="delete-details">
+            <h3>@Model.Title</h3>
+            <p><strong>Tác giả:</strong> @Model.Author</p>
+            <p><strong>Thể loại:</strong> @Model.Category?.CategoryName</p>
+            <p><strong>Đơn giá:</strong> <span class="text-danger fw-semibold">@Model.Price.ToString("N0") VND</span></p>
+            <p><strong>Mô tả ngắn:</strong> @Model.Description</p>
+        </div>
+    </div>
+
+    <form asp-action="Delete">
+        <input type="hidden" asp-for="Id" />
+        <div class="d-flex justify-content-end gap-3 pt-3 border-top border-light">
+            <a asp-action="Index" class="btn-cancel-premium">Quay lại</a>
+            <button type="submit" class="btn-delete-premium">Xác nhận Xóa</button>
+        </div>
+    </form>
 </div>
